@@ -46,7 +46,10 @@ function getOwnerDifferences(prevOwner, nextOwner) {
         // Both exist, compare them
         let differences;
         try {
-          differences = findObjectsDifferences(prev.result, next.result, {shallow: false});
+          differences = findObjectsDifferences(prev.result, next.result, {
+            shallow: false,
+            opaqueOverride: wdyrStore.options?.opaqueOverride
+          });
         } catch {
           differences = {error: 'diff_failed'};
         }
@@ -58,8 +61,12 @@ function getOwnerDifferences(prevOwner, nextOwner) {
     }
 
     return {
-      propsDifferences: findObjectsDifferences(prevOwnerData.props, nextOwnerData.props),
-      stateDifferences: findObjectsDifferences(prevOwnerData.state, nextOwnerData.state),
+      propsDifferences: findObjectsDifferences(prevOwnerData.props, nextOwnerData.props, {
+        opaqueOverride: wdyrStore.options?.opaqueOverride
+      }),
+      stateDifferences: findObjectsDifferences(prevOwnerData.state, nextOwnerData.state, {
+        opaqueOverride: wdyrStore.options?.opaqueOverride
+      }),
       hookDifferences: hookDifferences.length > 0 ? hookDifferences : false,
     };
   }
@@ -78,9 +85,16 @@ function getOwnerDifferences(prevOwner, nextOwner) {
 
 function getUpdateReason(prevOwner, prevProps, prevState, prevHookResult, nextOwner, nextProps, nextState, nextHookResult) {
   return {
-    propsDifferences: findObjectsDifferences(prevProps, nextProps),
-    stateDifferences: findObjectsDifferences(prevState, nextState),
-    hookDifferences: findObjectsDifferences(prevHookResult, nextHookResult, {shallow: false}),
+    propsDifferences: findObjectsDifferences(prevProps, nextProps, {
+      opaqueOverride: wdyrStore.options?.opaqueOverride
+    }),
+    stateDifferences: findObjectsDifferences(prevState, nextState, {
+      opaqueOverride: wdyrStore.options?.opaqueOverride
+    }),
+    hookDifferences: findObjectsDifferences(prevHookResult, nextHookResult, {
+      shallow: false,
+      opaqueOverride: wdyrStore.options?.opaqueOverride
+    }),
     ownerDifferences: getOwnerDifferences(prevOwner, nextOwner),
   };
 }
